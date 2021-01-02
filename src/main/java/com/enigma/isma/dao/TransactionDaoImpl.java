@@ -158,49 +158,4 @@ public class TransactionDaoImpl implements TransactionDao {
         return result;
 }
 
-	@Override
-	public List<Transaction> getAllTransactionByDateSingleUser(String date, User user) {
-		List<Transaction> transactions = null;
-		try {
-			this.session.beginTransaction();
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			Date date1 = simpleDateFormat.parse(date);
-			CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-			CriteriaQuery<Transaction> query = criteriaBuilder.createQuery(Transaction.class);
-			Root<Transaction> root = query.from(Transaction.class);
-			Predicate predicate1 = criteriaBuilder.equal(root.get("rentDate"), date1);
-			Predicate predicate2 = criteriaBuilder.equal(root.get("returnDate"), date1);
-			Predicate predicate3 = criteriaBuilder.equal(root.get("userId"),user.getId());
-
-			Predicate predicate = criteriaBuilder.or(criteriaBuilder.and(predicate1,predicate3), criteriaBuilder.and(predicate2,predicate3));
-
-			query.select(root).where(predicate);
-
-			transactions = session.createQuery(query).getResultList();
-
-		} catch (Exception e) {
-			transactions=null;
-		}
-
-		return transactions;
-	}
-
-	@Override
-	public List<Transaction> getAllTransactionByMonthSingleUser(Integer month, Integer year, User user) {
-		List<Transaction> result = new ArrayList<>();
-		try {
-			Calendar rentDate = new GregorianCalendar();
-			List<Transaction> transactions = getTransactionsByUserId(user);
-			for (Transaction transaction: transactions) {
-				rentDate.setTime(transaction.getRentDate());
-				if( rentDate.get(Calendar.MONTH)+1==month && rentDate.get(Calendar.YEAR)==year ) {
-					result.add(transaction);
-				}else{
-					result=null;
-				}
-			}
-		}catch (Exception e){
-			result=null;
-		}
-		return result;	}
 }

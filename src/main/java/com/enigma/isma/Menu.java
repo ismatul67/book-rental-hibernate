@@ -21,7 +21,7 @@ public class Menu {
 	UserDao userDao = new UserDaoImpl();
 
 
-	public void start() throws NumberFormatException, IOException {
+	public void start() throws Exception {
 
 
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -48,7 +48,7 @@ public class Menu {
 
 	}
 
-	public void signIn() throws IOException {
+	public void signIn() throws Exception {
 		User user = null;
 
 		while (user==null){
@@ -62,6 +62,7 @@ public class Menu {
 				System.out.println("email atau password salah!Silahkan ulangi!");
 			}else {
 				System.out.println("login berhasil!");
+				System.out.println("=====Selamat Datang " + user.getName()+ "======");
 				MemberMenu memberMenu = new MemberMenu();
 				memberMenu.printMenu(br,booksDao,transactionDao,shelfDao,categoryDao,user);
 			}

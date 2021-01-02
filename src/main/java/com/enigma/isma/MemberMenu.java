@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MemberMenu {
-    public void printMenu(BufferedReader br, BooksDao booksDao, TransactionDao transactionDao, ShelfDao shelfDao, CategoryDao categoryDao, User user) throws IOException {
+    public void printMenu(BufferedReader br, BooksDao booksDao, TransactionDao transactionDao, ShelfDao shelfDao, CategoryDao categoryDao, User user) throws Exception {
 		Category category;
 		Shelf shelf;
 		Books book;
@@ -262,7 +262,9 @@ public class MemberMenu {
 					break;
 				case 9:
 					transactions = transactionDao.getAllTransaction();
-					if (!transactions.isEmpty()){
+					if (transactions.isEmpty()){
+						System.out.println("Tidak ada buku yang dipinjam");
+					}else {
 						numb=1;
 						for (Transaction trx: transactions) {
 							if (user.getRole()==Role.Member){
@@ -272,13 +274,13 @@ public class MemberMenu {
 							}
 							numb++;
 						}
-					}else {
-						System.out.println("Tidak ada buku yang dipinjam");
 					}
 					break;
 				case 10:
 					transactions = transactionDao.getAllTransaction();
-					if (!transactions.isEmpty()){
+					if (transactions.isEmpty()){
+						System.out.println("Tidak ada transaksi buku");
+					}else {
 						numb=1;
 						for (Transaction trx: transactions) {
 							if (user.getRole()==Role.Member){
@@ -288,8 +290,6 @@ public class MemberMenu {
 							}
 							numb++;
 						}
-					}else {
-						System.out.println("Tidak ada transaksi buku");
 					}
 					break;
 				case 11:
@@ -399,9 +399,8 @@ public class MemberMenu {
 				break;
 		}
 	}
-	public void reportNonAdmin(BufferedReader br, TransactionDao transactionDao, User user) throws IOException {
+	public void reportNonAdmin(BufferedReader br, TransactionDao transactionDao, User user) throws Exception {
 		List<Transaction> transactionList;
-
 		System.out.println("1. Lihat transaksi berdasarkan tanggal");
 		System.out.println("2. Lihat transaksi berdasarkan bulan");
 		System.out.println("Masukkan angka pilihan: ");
@@ -410,13 +409,13 @@ public class MemberMenu {
 			case 1:
 				System.out.println("Masukkan tanggal transaksi (yyyy-MM-dd):");
 				String date = br.readLine();
-				transactionList=transactionDao.getAllTransactionByDateSingleUser(date,user);
-				if (transactionList==null){
-					System.out.println("Tidak ada transaksi");
-				}else {
+				transactionList=transactionDao.getAllTransactionByDate(date);
+				if (transactionList.isEmpty()){
+					System.out.println("Kamu tidak memiliki transaksi di tanggal tersebut.");
+				}else{
 					Integer number=1;
 					for (Transaction trx: transactionList) {
-						ShowTable.printTransaction(trx,number);
+						ShowTable.printTransactionOrderByUser(trx,number,user);
 					}
 				}
 				break;
@@ -425,13 +424,13 @@ public class MemberMenu {
 				Integer month = Integer.parseInt(br.readLine());
 				System.out.println("Masukkan tahun (yyyy): ");
 				Integer year = Integer.parseInt(br.readLine());
-				transactionList=transactionDao.getAllTransactionByMonthSingleUser(month,year,user);
-				if (transactionList==null){
-					System.out.println("Tidak ada transaksi");
-				}else {
+				transactionList=transactionDao.getAllTransactionByMonth(month,year);
+				if (transactionList.isEmpty()){
+					System.out.println("Kamu tidak memiliki transaksi di bulan tersebut.");
+				}else{
 					Integer number=1;
 					for (Transaction trx: transactionList) {
-						ShowTable.printTransaction(trx,number);
+						ShowTable.printTransactionOrderByUser(trx,number,user);
 					}
 				}
 				break;

@@ -21,10 +21,4 @@ public interface TransactionDao {
 
 	public List<Transaction> getAllTransactionByMonth(Integer month, Integer year);
 
-	public List<Transaction> getAllTransactionByDateSingleUser (String date, User user);
-
-	public List<Transaction> getAllTransactionByMonthSingleUser(Integer month, Integer year, User user);
-
-
-
 }
