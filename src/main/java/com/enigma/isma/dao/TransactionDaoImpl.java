@@ -1,5 +1,6 @@
 package com.enigma.isma.dao;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -110,31 +111,37 @@ public class TransactionDaoImpl implements TransactionDao {
 	@Override
 	public List<Transaction> getAllTransactionByDate(String date) {
 		// TODO Auto-generated method stub
-	        List<Transaction> transactions = null;
+	        List<Transaction> transactions;
 	        try {
 				this.session.beginTransaction();
-				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	            Date date1 = simpleDateFormat.parse(date);
+				Date date1 = null;
+
+				try {
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+					date1 = simpleDateFormat.parse(date);
+				}catch (ParseException e){
+					transactions=null;
+				}
 	            CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 	            CriteriaQuery<Transaction> query = criteriaBuilder.createQuery(Transaction.class);
 
 	            Root<Transaction> root = query.from(Transaction.class);
 
-	            Predicate predicate1 = criteriaBuilder.equal(root.get("rentDate"), date1);
-	            Predicate predicate2 = criteriaBuilder.equal(root.get("returnDate"), date1);
+				List<Predicate> predicates = new ArrayList<>();
 
-	            Predicate predicate = criteriaBuilder.or(predicate1, predicate2);
+				predicates.add(criteriaBuilder.equal(root.get("rentDate"),date1));
 
-	            query.select(root).where(predicate);
+				// equal
+				predicates.add(criteriaBuilder.equal(root.get("returnDate"), date1));
 
+				query.where(criteriaBuilder.or(predicates.toArray(new Predicate[]{})));
 	             transactions = session.createQuery(query).getResultList();
 
-
 	        } catch (Exception e) {
-	        	transactions=null;
-	        }
+				transactions=null;
+			}
 
-	        return transactions;
+		return transactions;
 	}
 
 	@Override

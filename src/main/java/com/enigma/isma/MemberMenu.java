@@ -341,7 +341,7 @@ public class MemberMenu {
 		int choice = Integer.parseInt(br.readLine());
 		switch (choice) {
 			case 1:
-				System.out.println("Masukkan tanggal transaksi (yyyy-MM-dd):");
+				System.out.println("Masukkan tanggal transaksi (yyyy-MM-dd) [tanpa angka 0 di awal tanggal/bulan]:");
 				String date = br.readLine();
 				transactionList=transactionDao.getAllTransactionByDate(date);
 				if (transactionList.isEmpty()){
@@ -354,7 +354,7 @@ public class MemberMenu {
 				}
 				break;
 			case 2:
-				System.out.println("Masukkan bulan (MM): ");
+				System.out.println("Masukkan bulan transaksi peminjaman (MM) [tanpa angka 0 di awal]: ");
 				Integer month = Integer.parseInt(br.readLine());
 				System.out.println("Masukkan tahun (yyyy): ");
 				Integer year = Integer.parseInt(br.readLine());
@@ -407,7 +407,7 @@ public class MemberMenu {
 		int choice = Integer.parseInt(br.readLine());
 		switch (choice) {
 			case 1:
-				System.out.println("Masukkan tanggal transaksi (yyyy-MM-dd):");
+				System.out.println("Masukkan tanggal transaksi (yyyy-MM-dd) [tanpa angka 0 di awal tanggal/bulan]:");
 				String date = br.readLine();
 				transactionList=transactionDao.getAllTransactionByDate(date);
 				if (transactionList.isEmpty()){
@@ -420,7 +420,7 @@ public class MemberMenu {
 				}
 				break;
 			case 2:
-				System.out.println("Masukkan bulan (MM): ");
+				System.out.println("Masukkan bulan transaksi peminjaman (MM) [tanpa angka 0 di awal]: ");
 				Integer month = Integer.parseInt(br.readLine());
 				System.out.println("Masukkan tahun (yyyy): ");
 				Integer year = Integer.parseInt(br.readLine());

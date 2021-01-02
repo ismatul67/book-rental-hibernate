@@ -26,23 +26,26 @@ public class ShowTable {
     }
 
     public static void printBorrowedBookOrderByUser(Transaction transaction, Integer numb, User user){
-        Books book = transaction.getBookTransaction();
-
-        if (!book.isAvailable()){
-        if (user.getId().equals(transaction.getMember().getId())){
-            System.out.println("No.\t\t\t: " + numb);
-            System.out.println("Judul\t\t:" + book.getTitle());
-            System.out.println("Penulis\t\t:" + book.getAuthor());
-            System.out.println("Kategori\t: " + book.getCategory().getName());
-            System.out.println("Durasi\t\t: " +book.getCategory().getDuration()+" hari");
-            System.out.println("Harga\t\t: " + book.getCategory().getFeeBook());
-            System.out.println("Kode Rak\t: " + book.getShelf().getShelfCode());
-            String status="dipinjam";
-            System.out.println("Status\t\t: " + status);
-            System.out.println("=================================================");
-        }
+        if (transaction!=null){
+            if (user.getId().equals(transaction.getMember().getId())){
+                Books book = transaction.getBookTransaction();
+                if (!book.isAvailable()){
+                    System.out.println("No.\t\t\t: " + numb);
+                    System.out.println("Judul\t\t:" + book.getTitle());
+                    System.out.println("Penulis\t\t:" + book.getAuthor());
+                    System.out.println("Kategori\t: " + book.getCategory().getName());
+                    System.out.println("Durasi\t\t: " +book.getCategory().getDuration()+" hari");
+                    System.out.println("Harga\t\t: " + book.getCategory().getFeeBook());
+                    System.out.println("Kode Rak\t: " + book.getShelf().getShelfCode());
+                    String status="dipinjam";
+                    System.out.println("Status\t\t: " + status);
+                    System.out.println("=================================================");
+                }
+            } else {
+                System.out.println("Kamu tidak memiliki buku yang masih dipinjam");
+            }
         }else {
-            System.out.println("Tidak ada Buku yang masih dipinjam");
+            System.out.println("Kamu tidak memiliki buku yang masih dipinjam");
         }
     }
 
@@ -143,8 +146,6 @@ public class ShowTable {
           }else {
               System.out.println("Kamu tidak memiliki transaksi");
           }
-      }else {
-          System.out.println("Kamu tidak memiliki transaki");
       }
     }
 }

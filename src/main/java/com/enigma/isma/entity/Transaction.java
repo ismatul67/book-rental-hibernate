@@ -37,11 +37,11 @@ public class Transaction {
 	@Column(name="penalty_fee", nullable = true)
 	private Double penaltyfee;
 
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn(name="book_id")
 	private Books bookTransaction;
 
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private User user;
 
