@@ -1,9 +1,6 @@
 package com.enigma.isma;
 
-import com.enigma.isma.dao.BooksDao;
-import com.enigma.isma.dao.CategoryDao;
-import com.enigma.isma.dao.ShelfDao;
-import com.enigma.isma.dao.TransactionDao;
+import com.enigma.isma.dao.*;
 import com.enigma.isma.entity.*;
 
 import java.io.BufferedReader;
@@ -28,7 +25,7 @@ public class MemberMenu {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
 		String title;
 		List<Transaction> transactions;
-
+		UserDao userDao = new UserDaoImpl();
 		int pilih=0;
 
 		while (pilih<13){
@@ -165,39 +162,58 @@ public class MemberMenu {
 					break;
 				case 6:
 					if (user.getRole()==Role.Member){
-						System.out.println("==============PEMINJAMAN BUKU=============");
-						System.out.print("Masukan judul Buku yang ingin dipinjam : ");
-						String judul = br.readLine();
-						Books bookTransaction = booksDao.getBookSingleTitle(judul);
+						boolean isBorrowed=false;
+						if (!(user.getTransaction()==null && user.getTransaction().isEmpty())){
+							transactions = user.getTransaction();
+							for (Transaction trx: transactions) {
+								if (trx.getReturnDate()==null){
+									isBorrowed=true;
+								}else{
+									isBorrowed=false;
+								}
+							}
+						}else {
+							isBorrowed=false;
+						}
 
-						if (bookTransaction != null) {
-							System.out.println("==========Buku ditemukan=======");
-							ShowTable.printBook(bookTransaction,1);
-							if (bookTransaction.isAvailable()) {
-								System.out.println("Masukkan tanggal pinjam (yyyy-MM-dd): ");
-								String date = br.readLine();
-								Date rentDate = null;
-								try {
-									Double payment = bookTransaction.getCategory().getFeeBook();
-									rentDate = dateFormat.parse(date);
-									Transaction trans = new Transaction(rentDate, payment, bookTransaction, user);
-									status= transactionDao.saveTransaction(trans);
-									bookTransaction.setAvailable(false);
-									booksDao.updateBook(bookTransaction);
+						if (isBorrowed==true){
+							System.out.println("Kamu sedang memiminjam buku! kembalikan terlebih dahulu");
+						}else {
+							System.out.println("==============PEMINJAMAN BUKU=============");
+							System.out.print("Masukan judul Buku yang ingin dipinjam : ");
+							String judul = br.readLine();
+							Books bookTransaction = booksDao.getBookSingleTitle(judul);
 
-									if (status.equals("Success")){
-										System.out.println("Berhasil meminjam");
-									}else {
-										System.out.println("Gagal meminjam");
+							if (bookTransaction != null) {
+								System.out.println("==========Buku ditemukan=======");
+								ShowTable.printBook(bookTransaction,1);
+								if (bookTransaction.isAvailable()) {
+									System.out.println("Masukkan tanggal pinjam (yyyy-MM-dd): ");
+									String date = br.readLine();
+									Date rentDate = null;
+									try {
+										Double payment = bookTransaction.getCategory().getFeeBook();
+										rentDate = dateFormat.parse(date);
+										Transaction trans = new Transaction(rentDate, payment, bookTransaction, user);
+										status= transactionDao.saveTransaction(trans);
+										bookTransaction.setAvailable(false);
+										booksDao.updateBook(bookTransaction);
+
+										if (status.equals("Success")){
+											System.out.println("Berhasil meminjam");
+											pilih=13;
+										}else {
+											System.out.println("Gagal meminjam");
+										}
+									} catch (ParseException e) {
+										e.printStackTrace();
 									}
-								} catch (ParseException e) {
-									e.printStackTrace();
+								} else {
+									System.out.println("Maaf buku sedang dipinjam");
 								}
 							} else {
-								System.out.println("Maaf buku sedang dipinjam");
+								System.out.println("Buku yang anda cari tidak ada");
 							}
-						} else {
-							System.out.println("Buku yang anda cari tidak ada");
 						}
 
 					}else {
@@ -206,6 +222,7 @@ public class MemberMenu {
 					break;
 				case 7:
 					if (user.getRole()==Role.Member){
+
 						System.out.println("==============MENGEMBALIKAN BUKU=============");
 						transactionDao.getAllTransaction();
 						System.out.println("Masukkan ID transaksi : ");
@@ -238,7 +255,8 @@ public class MemberMenu {
 								booksDao.updateBook(book);
 
 								if (status.equals("Success")){
-									System.out.println("Transaksi berhasil");
+									System.out.println("Transaksi pengembalian berhasil");
+									pilih=13;
 								}else {
 									System.out.println("Transaksi gagal");
 								}
